@@ -9,14 +9,15 @@ using System.Collections;
 
 public class GameManager : MonoBehaviour {
 
-	public Controller2D controller2D;		//Reference to the players controller
+	public ControllerV3 controller;			//Reference to the players controller
 	public NPC npc;							//Reference to the NPC in scene (May need to be a list later...)
 	public Menu menu;						//Reference to the menu script
+	public GameObject cam;					//reference to game camera;
 
-	string level;							//name of current scene
+	//string level;							//name of current scene
 
 #region Variables for temporary health bar 
-	//Health Texture
+	/*//Health Texture
 	public Texture playerHealthTex;
 	public Texture lostHealthTex;
 	//Health Texture Position
@@ -27,20 +28,20 @@ public class GameManager : MonoBehaviour {
 	public int iconSizey = 10;
 
 	public int maxHealth = 10;				//Max player health
-	public int currentHealth = 10;			//Current player health
+	public int currentHealth = 10;			//Current player health*/
 #endregion
 	
 	private bool prox;						//Checks npc proximity
 
 	//Main menu variables
 	bool menuOpen;							//Checks if menu is currently open
-	bool toggleMenu;						//Toggles Menu
+	bool characterMoveAllowed;
 	string menuSelection;					//Current item selected in menu
 
 	// Use this for initialization
 	void Start () {
 		menuOpen = false;
-		toggleMenu = false;
+		characterMoveAllowed = true;
 	}
 
 	// Update is called once per frame
@@ -48,12 +49,6 @@ public class GameManager : MonoBehaviour {
 		//checks for key press to open menu
 		if (Input.GetKeyDown (KeyCode.Escape)) {
 			ToggleMenu();
-		}
-		if (toggleMenu) {
-			if (Input.GetKeyDown(KeyCode.Space)){
-				ToggleMenu();
-				toggleMenu = false;
-			}
 		}
 	}
 
@@ -64,13 +59,13 @@ public class GameManager : MonoBehaviour {
 	void OnGUI(){
 		//Draw overworl Gui
 		if (this.tag == "Overworld") {
-			//Draws underlining red bar
+			/*//Draws underlining red bar
 			GUI.DrawTexture (new Rect (screenPosX, screenPosY, (iconSizeX * maxHealth), iconSizey), lostHealthTex, ScaleMode.StretchToFill, true, 0);
 			//Draws green bar according to health
 			for (int h = 0; h < currentHealth; h++) {
 				GUI.DrawTexture (new Rect (screenPosX + (h * iconSizeX), screenPosY, iconSizeX, iconSizey), playerHealthTex, ScaleMode.ScaleToFit, true, 0);
-			}
-		//Draw Shop GUI
+			}*/
+		//Draw Shop/NPC GUI
 		} else if (this.tag == "Shop") {
 			GUI.skin.box.wordWrap = true;
 			GUI.skin.box.alignment = TextAnchor.UpperLeft;
@@ -87,7 +82,6 @@ public class GameManager : MonoBehaviour {
 			GUI.SetNextControlName ("Exit Menu");
 			if (GUI.Button (new Rect ((Screen.width * 0.25f), (Screen.height * 0.3f), (Screen.width * 0.5f), (Screen.height * 0.1f)), "Exit Menu")) {
 				Debug.Log ("Exit Menu");
-				toggleMenu = true;
 				ToggleMenu();
 			}
 			GUI.SetNextControlName ("Test1");
@@ -109,7 +103,7 @@ public class GameManager : MonoBehaviour {
 	}
 #endregion
 
-	/// <summary>
+	/*/// <summary>
 	/// Temporary method to damage player when they hit enemy
 	/// </summary>
 	/// <param name="damage">damage - amount of health player loses from hitting enemy</param>
@@ -123,20 +117,24 @@ public class GameManager : MonoBehaviour {
 			currentHealth = 0;
 			RestartScene();
 		}
+	}*/
+
+	void StartBattle(){
+		
 	}
 
 	/// <summary>
 	/// Toggles the menu.
 	/// </summary>
 	void ToggleMenu(){
-		if (menuOpen == false) {
-			menuOpen = true;
+		menuOpen = !menuOpen;
+		characterMoveAllowed = !characterMoveAllowed;
+		/*if (!menuOpen) {
 			//Application.LoadLevelAdditive ("Menu");
-		}else if (menuOpen == true){
-			menuOpen = false;
+		}else if (menuOpen){
 			//Destroy(GameObject.Find("MenuCamera"));
 			//Destroy(GameObject.Find("MenuArt"));
-		}
+		}*/
 	}
 
 	/// <summary>
@@ -147,11 +145,23 @@ public class GameManager : MonoBehaviour {
 		return menuOpen;
 	}
 
+	public void SetMenuOpen(bool menuState){
+		menuOpen = menuState;
+	}
+
+	public bool GetCharacterMoveAllowed(){
+		return characterMoveAllowed;
+	}
+
+	public void SetCharacterMoveAllowed(bool moveState){
+		characterMoveAllowed = moveState;
+	}
+
 	/// <summary>
 	/// Saves the last level. Doesn't serve desired purpose yet...
 	/// </summary>
 	public void SaveLastLevel(){
-		level = Application.loadedLevelName;
+		//level = Application.loadedLevelName;
 	}
 
 	/// <summary>
